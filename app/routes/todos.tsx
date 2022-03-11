@@ -4,7 +4,7 @@ import { Todo } from "~/model/todos";
 import { db } from "~/utils/db.server";
 
 export const loader: LoaderFunction = async () => {
-  const todos = await db.todos.findMany();
+  const todos = await db.todos.findMany({ orderBy: { created_timestamp: "asc" } });
   return json(todos);
 };
 
