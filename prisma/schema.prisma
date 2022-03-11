@@ -11,5 +11,5 @@ model todos {
   id                String    @id @default(uuid()) @db.Uuid
   title             String    @db.VarChar(100)
   completed         Boolean   @default(false)
-  created_timestamp DateTime? @db.Timestamp(6)
+  created_timestamp DateTime? @default(now()) @db.Timestamp(6)
 }

@@ -1,6 +1,5 @@
-import { Request } from "@remix-run/node";
-import { Form, json, LoaderFunction, useLoaderData } from "remix";
-import TodoItem from "~/components/Todo";
+import { ActionFunction, Form, json, LoaderFunction, useLoaderData } from "remix";
+import TodoItem from "~/components/TodoItem";
 import { Todo } from "~/model/todos";
 import { db } from "~/utils/db.server";
 
@@ -9,22 +8,21 @@ export const loader: LoaderFunction = async () => {
   return json(todos);
 };
 
-export const action = async ({ request }: { request: Request }) => {
+export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const title = formData.get("title") as string;
-  db.todos.create({ data: { title } });
+  await db.todos.create({ data: { title } });
   return null;
 };
 
 export default function Todos() {
   const todos = useLoaderData<Todo[]>();
-  console.log(todos);
   const itemsLeft = Array.isArray(todos) ? todos.filter((todo) => !todo.completed).length : 0;
   return (
     <section className="todoapp">
       <header className="header">
         <h1>todos</h1>
-        <Form method="post">
+        <Form method="post" reloadDocument>
           <input className="new-todo" name="title" placeholder="What needs to be done?" autoFocus />
         </Form>
       </header>
@@ -34,7 +32,7 @@ export default function Todos() {
           <label htmlFor="toggle-all">Mark all as complete</label>
         </form>
         <ul className="todo-list" id="todo-list">
-          {Array.isArray(todos) && todos.map((todo) => <TodoItem todo={todo}></TodoItem>)}
+          {Array.isArray(todos) && todos.map((todo) => <TodoItem key={todo.id} todo={todo}></TodoItem>)}
         </ul>
       </section>
       <footer className="footer">
