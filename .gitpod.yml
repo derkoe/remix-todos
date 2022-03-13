@@ -1,6 +1,6 @@
 image: gitpod/workspace-postgres
 tasks:
-  - init: npm init && psql -f create-dev-db.sql
+  - init: npm ci && npx prisma migrate dev
     command: npm run dev
 ports:
   - port: 3000
