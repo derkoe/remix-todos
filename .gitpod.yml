@@ -1,0 +1,7 @@
+image: gitpod/workspace-postgres
+tasks:
+  - init: npm init && psql -f create-dev-db.sql
+    command: npm run dev
+ports:
+  - port: 3000
+    onOpen: open-preview
