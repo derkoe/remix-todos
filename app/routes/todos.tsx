@@ -3,8 +3,14 @@ import TodoItem from "~/components/TodoItem";
 import { Todo } from "~/model/todos";
 import { db } from "~/utils/db.server";
 
-export const loader: LoaderFunction = async () => {
-  const todos = await db.todos.findMany({ orderBy: { created_timestamp: "asc" } });
+export const loader: LoaderFunction = async ({ params, request }) => {
+  let where = {};
+  const url = new URL(request.url);
+  const filter = url.searchParams.get("filter");
+  if (filter) {
+    where = { completed: filter === "completed" };
+  }
+  const todos = await db.todos.findMany({ orderBy: { created_timestamp: "asc" }, where });
   return json(todos);
 };
 
@@ -46,19 +52,19 @@ export default function Todos() {
             </a>
           </li>
           <li>
-            <a className="{active ? 'selected' : ''}" href="/todos/active">
+            <a className="{active ? 'selected' : ''}" href="/todos?filter=active">
               Active
             </a>
           </li>
           <li>
-            <a className="{completed ? 'selected' : ''}" href="/todos/completed">
+            <a className="{completed ? 'selected' : ''}" href="/todos?filter=completed">
               Completed
             </a>
           </li>
         </ul>
-        <form action="/todos/clear-completed" method="POST">
+        <Form action="/todos/clear-completed" method="post">
           <button className="clear-completed">Clear completed</button>
-        </form>
+        </Form>
       </footer>
     </section>
   );
