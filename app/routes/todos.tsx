@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ActionFunction, Form, json, LoaderFunction, useLoaderData } from "remix";
 import TodoItem from "~/components/TodoItem";
 import { Todo } from "~/model/todos";
@@ -24,6 +25,7 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Todos() {
   const todos = useLoaderData<Todo[]>();
   const itemsLeft = Array.isArray(todos) ? todos.filter((todo) => !todo.completed).length : 0;
+  const [editingId, setEditingId] = useState<string | null>(null);
   return (
     <section className="todoapp">
       <header className="header">
@@ -38,7 +40,10 @@ export default function Todos() {
           <label htmlFor="toggle-all">Mark all as complete</label>
         </form>
         <ul className="todo-list" id="todo-list">
-          {Array.isArray(todos) && todos.map((todo) => <TodoItem key={todo.id} todo={todo}></TodoItem>)}
+          {Array.isArray(todos) &&
+            todos.map((todo) => (
+              <TodoItem key={todo.id} todo={todo} editing={todo.id === editingId} onEditTodo={setEditingId}></TodoItem>
+            ))}
         </ul>
       </section>
       <footer className="footer">
